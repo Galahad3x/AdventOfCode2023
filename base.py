@@ -11,9 +11,9 @@ def part_2():
 
 
 if __name__ in "__main__":
-    print("PART 1:".center(__width=30, __fillchar="="))
-    print(str(part_1()).center(__width=30))
-    print("=".center(30))
-    print("PART 2:".center(__width=30, __fillchar="="))
-    print(str(part_2()).center(__width=30))
-    print("=".center(30))
+    print("PART 1:".center(30, "="))
+    print(str(part_1()).center(30))
+    print("=" * 30)
+    print("PART 2:".center(30, "="))
+    print(str(part_2()).center(30))
+    print("=" * 30)
