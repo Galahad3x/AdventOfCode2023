@@ -103,10 +103,10 @@ def part_2():
     ]
     for translation in translations_needed:
         new_seed_ranges = []
-        for s, sr in seed_ranges:
+        seed_range_stack = seed_ranges[:]
+        while len(seed_range_stack) > 0:
+            s, sr = seed_range_stack.pop(0)
             transitions_applied = 0
-            new_ranges = []
-            new_ranges_no_translate = []
             for t, tr in translations[translation].keys():
                 # Si la traducció xoca amb el seed range
                 if t <= s and t + tr > s:
@@ -118,16 +118,13 @@ def part_2():
                         translated_s = translations[translation][(t, tr)] + (s - t)
                         left = (translated_s, t + tr - s)
                         right = (t + tr, s + sr - (t + tr))
-                        new_ranges.append(left)
-                        new_ranges_no_translate.append((s, t + tr - s))
-                        new_ranges.append(right)
-                        new_ranges_no_translate.append(right)
+                        new_seed_ranges.append(left)
+                        seed_range_stack.append(right)
                     else:
                         # 6, 2
                         # Tot es un tros sencer de la mida de s
                         translated_s = translations[translation][(t, tr)] + (s - t)
-                        new_ranges.append((translated_s, sr))
-                        new_ranges_no_translate.append((s, sr))
+                        new_seed_ranges.append((translated_s, sr))
                 elif t > s and t < s + sr:
                     transitions_applied += 1
                     if t + tr < s + sr:
@@ -137,12 +134,9 @@ def part_2():
                         translated_t = translations[translation][(t, tr)]
                         middle = (translated_t, tr)
                         right = (t + tr, (s + sr) - (t + tr))
-                        new_ranges.append(left)
-                        new_ranges_no_translate.append(left)
-                        new_ranges.append(middle)
-                        new_ranges_no_translate.append((t, tr))
-                        new_ranges.append(right)
-                        new_ranges_no_translate.append(right)
+                        seed_range_stack.append(left)
+                        new_seed_ranges.append(middle)
+                        seed_range_stack.append(right)
                     else:
                         # 0, 5
                         # Esquerra anira de s a t
@@ -150,21 +144,11 @@ def part_2():
                         left = (s, t - s)
                         translated_t = translations[translation][(t, tr)]
                         right = (translated_t, s + sr - t)
-                        new_ranges.append(left)
-                        new_ranges_no_translate.append(left)
-                        new_ranges.append(right)
-                        new_ranges_no_translate.append((t, s + sr - t))
+                        seed_range_stack.append(left)
+                        new_seed_ranges.append(right)
             if transitions_applied == 0:
                 new_seed_ranges.append((s, sr))
-            elif transitions_applied == 1:
-                new_seed_ranges.extend(new_ranges)
-            else:
-                resorted = sorted(list(zip(new_ranges_no_translate, new_ranges)), key=lambda x: x[0][0])
-                normal_ranges, final_ranges = zip(*resorted)
-                print(normal_ranges)
-                return None
         seed_ranges = new_seed_ranges
-    print(sorted(seed_ranges, key=lambda x: x[0]))
     return sorted(seed_ranges, key=lambda x: x[0])[0][0]
 
 
@@ -173,5 +157,5 @@ if __name__ in "__main__":
     print(str(part_1()).center(30))
     print("=" * 30)
     print("PART 2:".center(30, "="))
-    print(str(part_2_sad()).center(30))
+    print(str(part_2()).center(30))
     print("=" * 30)
